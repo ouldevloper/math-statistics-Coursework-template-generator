@@ -1,1 +1,1 @@
-# math-statistics-Coursework-template-generator
+математическая статистика Генератор шаблонов курсовых работ для студентов 2 курса ИБ
