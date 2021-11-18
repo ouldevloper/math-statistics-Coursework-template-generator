@@ -47,10 +47,22 @@ Ydata = [85, 91, 80, 89, 86, 88, 93, 92, 83, 88, 97, 87, 87,
          88, 89, 94, 84, 84, 88, 97, 96, 90, 98, 84, 90, 83, 92,
          98, 80, 98, 92, 99]
 
-numbers = dict()
 _dataXY = []
-_dataZ = []
-tablenmuber = 0
+filename = "test.docx"
+table1 = []
+table2 = []
+table3 = []
+table4 = []
+table5 = []
+table6 = []
+table7 = []
+h = 0
+doc = Document()
+xbbar = 0
+db = 0
+betab = 0
+S = 0
+Spow2 = 0
 
 
 async def getresponse():
@@ -108,22 +120,21 @@ def showData(lst):
 
 
 ###########################################################################################
-autoData = []
-table3 = []
-h = 0
-Fx = []
-doc = Document()
+
+def writestep(num):
+    p = doc.add_paragraph("")
+    p.add_run("Step "+str(num)).bold = True
+    doc.save(filename)
 
 
 def generateData():
-    global autoData
     for i in range(200):
         # num1 = rand.randint(145, 195)
         # num2 = rand.randint(80, 100)
-        autoData.append([Xdata[i], Ydata[i]])
+        table1.append([Xdata[i], Ydata[i]])
 
 
-def showgenerateddata(lst):
+def step1_2(lst):
     global tablenmuber
     index_x = 0
     index_y = 0
@@ -146,13 +157,11 @@ def showgenerateddata(lst):
         index_x += 10
         # print("")
         doc.add_paragraph("")
-        tablenmuber += 1
-    doc.save("test.docx")
+    doc.save(filename)
 
 
-def sortGeneratedData(lst):
-    data = sorted(lst, key=lambda x: x[0])
-    return data
+def step2(lst):
+    table2 = sorted(lst, key=lambda x: x[0])
 
 
 def step3():
@@ -169,21 +178,14 @@ def step3():
             t.rows[1].cells[0].text = "xi"
             t.rows[2].cells[0].text = "pi"
             t.rows[3].cells[0].text = "ni"
+        table3.append([index+1, item, Xdata.count(item),
+                      (Xdata.count(item)/len(table1))])
         t.rows[0].cells[i+1].text = str(index+1)
         t.rows[1].cells[i+1].text = str(item)
         t.rows[2].cells[i+1].text = str(Xdata.count(item))
         t.rows[3].cells[i+1].text = "%d/200" % Xdata.count(item)
         i += 1
-    doc.save("test.docx")
-
-    # print("\ni |\t")
-    # [print("%7d" % index, end=" ") for index in range(1, len(tmp)+1)]
-    # print("\nX |\t")
-    # [print("%7d\t" % item, end=" ") for item in tmp]
-    # print("\nni|\t")
-    # [print("%7d" % Xdata.count(item), end=" ") for item in tmp]
-    # print("\npi|\t")
-    # [print("%3d/200" % (Xdata.count(item)),  end=" ") for item in tmp]
+    doc.save(filename)
 
 
 def step4():
@@ -192,22 +194,17 @@ def step4():
     h = math.ceil(h_)
     h_txt = "h = xmax-xmin/1+3.28*ln N  = %d-%d/1+3.28*ln %d = %f = %d" % (
         max(Xdata), min(Xdata), 200, h_, h)
-
     p = doc.add_paragraph("")
     p.add_run(h_txt).bold = True
-    doc.save("test.docx")
+    doc.save(filename)
 
 
 def step5_hep_1(start, end):
     count = 0
-    for item in set(Xdata):
+    for item in set([item[0] for item in table1]):
         if item in range(start if start == min(Xdata) else start+1, end+1):
             count += Xdata.count(item)
     return count
-
-
-forstep6tale = []
-pi = []
 
 
 def step5():
@@ -227,17 +224,15 @@ def step5():
     for index in range(lst):
         t.rows[index+1].cells[0].text = str(index+1)
         t.rows[index+1].cells[1].text = "%d-%d" % (item, item+h)
-
         tmp = step5_hep_1(item, item+h)
-        forstep6tale.append(tmp)
-        pi.append(tmp/len(Xdata))
         item += h
         sumni += tmp
         t.rows[index+1].cells[2].text = "%d" % (tmp)
         t.rows[index+1].cells[3].text = "%d/200" % tmp
+        table4.append([index+1, (item+item+h)/2, tmp, tmp/len(table1)])
     p = doc.add_paragraph("")
-    p.add_run("sum ni = %d/200 = %d" % (sumni, (sumni//200)))
-    doc.save("test.docx")
+    p.add_run("sum ni = %d/200 = %d" % (sumni, (sumni//len(table1))))
+    doc.save(filename)
 
 
 X = []
@@ -245,23 +240,22 @@ X = []
 
 def step6():
     doc.add_paragraph("")
-    t = doc.add_table(rows=len(forstep6tale)+1, cols=2)
+    t = doc.add_table(rows=len(table4)+1, cols=2)
     t.rows[0].cells[0].text = "i"
     t.rows[0].cells[1].text = "F*(x)"
-
     lastnum = 0
-    for index, item in enumerate(forstep6tale):
+    for index, item in enumerate([item[2] for item in table4]):
         if index == 0:
             t.rows[index+1].cells[0].text = "1"
             t.rows[index +
-                   1].cells[1].text = "%d/%d" % (forstep6tale[0], len(Xdata))
-            Fx.append((forstep6tale[0]/len(Xdata)))
+                   1].cells[1].text = "%d/%d" % (table4[0][2], len(table1))
+            table5.append([1, item/len(table1)])
         else:
             t.rows[index+1].cells[0].text = str(index+1)
             t.rows[index+1].cells[1].text = "%d/%d + %d/%d = %d/%d" % (
-                lastnum, len(Xdata), forstep6tale[index], len(Xdata), lastnum+forstep6tale[index], len(Xdata))
-            Fx.append((lastnum+forstep6tale[index])/len(Xdata))
-        lastnum += forstep6tale[index]
+                lastnum, len(Xdata), table4[index][2], len(Xdata), lastnum+table4[index][2], len(Xdata))
+            table5.append([index+1, (lastnum+item)/len(table1)])
+        lastnum += item
     doc.save('test.docx')
 
 
@@ -273,103 +267,160 @@ def step7():
     t.rows[0].cells[1].text = "Xi"
     t.rows[0].cells[2].text = "pi"
     t.rows[0].cells[3].text = "ni / h*N"
-    for i, item in enumerate(range(min(Xdata), max(Xdata)+1, 3)):
+    for i, item in enumerate(range(min(Xdata), max(Xdata)+1, math.ceil(h))):
         t.rows[i+1].cells[0].text = "%d" % (i+1)
         t.rows[i+1].cells[1].text = "%f" % ((item+item+3)/2)
-        t.rows[i+1].cells[2].text = "%f" % (forstep6tale[i]/len(Xdata))
-        t.rows[i+1].cells[3].text = "%f" % (forstep6tale[i]/(h*len(Xdata)))
-        X.append((item+item+3)/2)
-
-    doc.save("test.docx")
-
-    sumni = 0
-    for index in range(lst):
-        t.rows[index+1].cells[0].text = str(index+1)
-        t.rows[index+1].cells[1].text = "%d-%d" % (item, item+h)
+        t.rows[i+1].cells[2].text = "%f" % (table4[i][3]/len(Xdata))
+        t.rows[i+1].cells[3].text = "%f" % (table4[i][2]/(h*len(Xdata)))
+        table6.append([i+1, (item+item+3)/2, table4[i][3] /
+                      len(Xdata), table4[i][2]/(h*len(Xdata))])
+    doc.save(filename)
 
 
 def step8():
-    global Fx
-    global X
     # Y = list(range(min(Xdata), max(Xdata), len(Y)//len(Fx)))
-    plt.plot(X, Fx, "-o")
+    Y = [item[1] for item in table5]
+    X = [item[1] for item in table4]
+    plt.plot(X, Y, "-o")
     plt.xlabel("X")
     plt.ylabel("F*(x)")
     plt.savefig("step8.png")
-    doc.add_paragraph("")
-    p = doc.add_paragraph("")
-    p.add_run("Step 8").blod = True
     doc.add_picture("step8.png")
-    doc.save("test.docx")
-    # pprint.pprint(Fx)
-    # pprint.pprint(list(range(min(Xdata), max(Xdata)+1, 6)))
-    # plt.show()
+    doc.save(filename)
+    plt.close()
 
 
 def step9():
-    global X
-    global pi
-    plt.plot(X, pi, "-o")
-    plt.plot(X, pi, "s")
+    global table5
+    global table6
+    Y = [item[1] for item in table5]
+    X = [item[2] for item in table6]
+    plt.plot(Y, X, "-o")
     plt.savefig("step9.png")
     p = doc.add_paragraph("")
-    p.add_run("Step 9").bolr = True
+    p.add_run("Step 9").bold = True
     doc.add_picture("step9.png")
     doc.save("test.docx")
+    plt.close()
 
 
 def step10():
-    global X
-    sm = 0
-    for itemx, itemn in zip(X, forstep6tale):
-        sm += itemn*itemx
-    xbbar = "xb(bar) = %.3f/%d = %f" % (sum(X), len(Xdata), sm/len(Xdata))
+    global xbbar
+    global db
+    global betab
+    sm = sum([item[1]*item[2] for item in table4])
+    xbbar = sm/len(table1)
+    db = sum([(item[2]*(item[1]-xbbar)**2)/len(table1) for item in table4])
+    betab = math.sqrt(db)
     doc.add_paragraph("")
-    doc.add_paragraph(xbbar)
+    doc.add_paragraph("xb(bar) = %.3f/%d = %f" %
+                      (sm, len(table1), xbbar))
     doc.add_paragraph("")
-
-    pprint.pprint(sum(X))
-    Y = [(item/(len(Xdata)*h)) for item in forstep6tale]
+    doc.add_paragraph("db = ni*(xi-xbbar)^2/N  = %f " % db)
+    doc.add_paragraph("")
+    doc.add_paragraph("betab = sqrt(db) = sqrt(%f) = %f" % (db, betab))
+    doc.add_paragraph("")
+    X = [item[1] for item in table4]
+    Y = [(item/(len(table1)*h)) for item in [item[2] for item in table4]]
     plt.plot(X, Y)
     plt.savefig("step10.png")
-    p = doc.add_paragraph("")
-    p.add_run("Step 10").bold = True
     doc.add_picture("step10.png")
+
+    S = math.sqrt(len(table1) / (len(table1)-1))*betab
+    Spow2 = (len(table1) / (len(table1)-1))*db
+
+    doc.add_paragraph("")
+    doc.add_paragraph("S = sqrt(N/N-1)*betab = %f " % S)
+    doc.add_paragraph("")
+
+    doc.add_paragraph("")
+    doc.add_paragraph("S^2 = (N/N-1)*db = %f " % Spow2)
+    doc.add_paragraph("")
+
+    doc.save(filename)
+    plt.close()
+
+
+def step11():
+    t = doc.add_table(rows=len(table6)+1, cols=7)
+    t.rows[0].cells[0].text = "xi"
+    t.rows[0].cells[1].text = "xi-xb"
+    t.rows[0].cells[2].text = "ui = (xi-xb)/betab"
+    t.rows[0].cells[3].text = "laplaca(ui)"
+    t.rows[0].cells[4].text = "ni' = (nh/betab)*laplaca"
+    t.rows[0].cells[5].text = "ni'"
+    t.rows[0].cells[6].text = "pi*'"
+    sum = 0
+    for index, item in enumerate(table6):
+        col1 = item[1]-xbbar
+        col2 = col1/betab
+        col3 = (math.exp(1) **
+                (-(((item[1]-xbbar)/betab)**2)/2))*(1/math.sqrt(2*math.pi))
+        col4 = (len(table1)*h/betab)*col3
+
+        # if math.ceil(col3)-col4 > 0.4 else math.floor(col4)
+        col5 = math.ceil(col4)
+        col6 = col5/len(table1)
+        table7.append([item[1], col1, col2, col3, col4, col5, col6])
+        t.rows[index+1].cells[0].text = str(item[1])
+        t.rows[index+1].cells[1].text = f"{col1:.3f}"
+        t.rows[index+1].cells[2].text = f"{col2:.3f}"
+        t.rows[index+1].cells[3].text = f"{col3:.3f}"
+        t.rows[index + 1].cells[4].text = f"{col4:.3f}"
+        t.rows[index+1].cells[5].text = f"{col5}"
+        t.rows[index+1].cells[6].text = f"{col6:.3f}"
+        sum += col5
+    p = doc.add_paragraph("")
+    p.add_run("Sum n'i = %d" % sum)
     doc.save("test.docx")
+
+
+def step12():
+    global table5
+    global table6
+    plt.clf()
+    plt.close()
+    X = [item[1] for item in table6]
+    Y = [item[3] for item in table4]
+    Z = [item[6] for item in table7]
+    plt.plot(X, Y, "-s", label="l1")
+    plt.plot(X, Z, "-s", label="l2")
+    plt.legend()
+    plt.savefig("step12.png")
+    p = doc.add_paragraph("")
+    p.add_run("Step 12").bold = True
+    doc.add_picture("step12.png")
+    doc.save("test.docx")
+    plt.close()
 
 
 #########################################
 generateData()
-p = doc.add_paragraph("")
-p.add_run("Step 1").bold = True
-showgenerateddata(autoData)
-print("\n")
-p = doc.add_paragraph("")
-p.add_run("Step 2").bold = True
-d = sortGeneratedData(autoData)
-showgenerateddata(d)
-p = doc.add_paragraph("")
-p.add_run("Step 3").bold = True
+writestep(1)
+step1_2(table1)
+writestep(2)
+step2(table1)
+step1_2(table2)
+writestep(3)
 step3()
-p = doc.add_paragraph("")
-p.add_run("Step 4").bold = True
+writestep(4)
 step4()
-p = doc.add_paragraph("")
-p.add_run("Step 5").bold = True
+writestep(5)
 step5()
-p = doc.add_paragraph("")
-p.add_run("Step 6").bold = True
+writestep(6)
 step6()
-doc.add_paragraph("")
-p = doc.add_paragraph("")
-p.add_run("Step 7").bold = True
+writestep(7)
 step7()
-doc.add_paragraph("")
-p = doc.add_paragraph("")
-p.add_run("Step 8").bold = True
+writestep(8)
 step8()
+writestep(9)
 step9()
+writestep(10)
 step10()
+writestep(11)
+step11()
+writestep(12)
+step12()
 
 
 async def main():
