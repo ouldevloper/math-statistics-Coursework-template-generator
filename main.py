@@ -6,8 +6,12 @@ import json as js
 import asyncio
 from docx import Document
 import pprint
+from scipy.integrate import quad
 import math
 import matplotlib.pyplot as plt
+from docx.shared import Cm, Inches
+import sys
+import signal
 import io
 import random as rand
 Xdata = [168, 158, 173, 165, 164, 161, 150, 155, 153, 182,
@@ -56,6 +60,8 @@ table4 = []
 table5 = []
 table6 = []
 table7 = []
+table8 = []
+table9 = []
 h = 0
 doc = Document()
 xbbar = 0
@@ -122,6 +128,7 @@ def showData(lst):
 ###########################################################################################
 
 def writestep(num):
+    print(f"Step {num}")
     p = doc.add_paragraph("")
     p.add_run("Step "+str(num)).bold = True
     doc.save(filename)
@@ -233,10 +240,6 @@ def step5():
     p = doc.add_paragraph("")
     p.add_run("sum ni = %d/200 = %d" % (sumni, (sumni//len(table1))))
     doc.save(filename)
-
-
-X = []
-
 
 def step6():
     doc.add_paragraph("")
@@ -394,7 +397,101 @@ def step12():
     plt.close()
 
 
-#########################################
+def setep13():
+    ln = len(table7)
+    t = doc.ad_table(rows=len+3, cols=9)
+    t.rows[0].cells[0].text = "i"
+    t.rows[0].cells[1].text = "xi - xi+1"
+    t.rows[0].cells[2].text = "ni"
+    t.rows[0].cells[3].text = "Ф(zi)"
+    t.rows[0].cells[4].text = "Fn(xi)"
+    t.rows[0].cells[5].text = "Fn(xi+1)"
+    t.rows[0].cells[6].text = "pmi"
+    t.rows[0].cells[7].text = "nim = pmin"
+    t.rows[0].cells[8].text = "(ni - nim)^2/nm i"
+
+    t.rows[1].cells[0].text = "0"
+    t.rows[1].cells[1].text = f"-inf / {table7[0][0]}"
+    t.rows[1].cells[2].text = "-0.5"
+    t.rows[1].cells[3].text = "0"
+    t.rows[1].cells[4].text = "Fn(xi)"
+    t.rows[1].cells[5].text = "Fn(xi+1)"
+    t.rows[1].cells[6].text = "pmi"
+    t.rows[1].cells[7].text = "nim = pmin"
+    t.rows[1].cells[8].text = "(ni - nim)^2/nm i"
+
+
+def get_count_for_step14(val, _val):
+    tmp = list(filter(lambda x: x[0] == val, table1))
+    return list(map(lambda x: x[1], tmp)).count(_val)
+
+
+def step14():
+    lenydata = len(set(Ydata))
+    lenxdata = len(set(Xdata))
+    t = doc.add_table(rows=lenxdata+2, cols=lenydata+2)
+    t.columns[0].width = Inches(0.5)
+
+    for i in range(1, lenydata+2):
+        t.columns[i].width = Inches(0.3)
+    t.columns[lenydata + 1].width = Inches(0.5)
+    t.rows[0].cells[0].text = "X/Y"
+
+    for i, data in enumerate(set(Ydata)):
+        t.rows[0].cells[i+1].text = f"{data}"
+    t.rows[0].cells[lenydata+1].text = "nxi"
+
+    for i, data in enumerate(set(Xdata)):
+        t.rows[i+1].cells[0].text = f"{data}"
+    t.rows[lenxdata+1].cells[0].text = "yii"
+
+    tmp_x_table = [0]*lenydata
+    for index, data in enumerate(set(Xdata)):
+        tmp_table = []
+        for _index, _data in enumerate(set(Ydata)):
+            t.rows[index+1].cells[_index +
+                                  1].text = f"{get_count_for_step14(data, _data)}"
+            xx = get_count_for_step14(data, _data)
+            tmp_table.append(xx)
+            tmp_x_table[_index] += xx
+        x = sum(tmp_table)
+        t.rows[index+1].cells[lenydata +
+                              1].text = f"{x}"
+        tmp_table.append(x)
+        table9.append(tmp_table)
+    table9.append(tmp_x_table)
+
+    for i, data in enumerate(tmp_x_table):
+        t.rows[lenxdata+1].cells[i+1].text = f"{data}"
+    t.rows[lenxdata+1].cells[lenydata+1].text = f"{sum(tmp_x_table)}"
+    hy = min(list(filter(lambda x: x > 1, tmp_x_table)))
+    doc.add_paragraph(f"we take Y randomly : h={hy}")
+    Y = set(Ydata)
+    X = [item[0] for item in table7]
+    __Y = list(range(min(Y), max(Y), hy))
+    t = doc.add_table(rows=len(__Y)+3, cols=len(X)+3)
+    t.columns[1].width = Inches(0.5)
+    t.rows[0].cells[0].text = "N"
+    t.rows[1].cells[1].text = "Y/X"
+    t.rows[1].cells[len(X)+2].text = "nyi"
+    t.rows[len(__Y)+2].cells[1].text = "nxi"
+    for i, item in enumerate(X):
+        t.rows[0].cells[i+2].text = f"{i+1}"
+        t.rows[1].cells[i+2].text = f"{item}"
+
+    for i, item in enumerate(__Y):
+        t.rows[i+2].cells[0].text = f"{i+1}"
+        t.rows[i+2].cells[1].text = f"{item}"
+        print(f"{i+1}")
+        print(f"{item}")
+
+    doc.save("test.docx")
+
+
+def step15():
+    pass
+
+    #########################################
 generateData()
 writestep(1)
 step1_2(table1)
@@ -421,6 +518,8 @@ writestep(11)
 step11()
 writestep(12)
 step12()
+writestep(14)
+step14()
 
 
 async def main():
