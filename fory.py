@@ -24,41 +24,6 @@ class CollectDataFromAPI:
 
 class MathStatistics:
     def __init__(self, filename="output.docx"):
-        # self.Xdata = [148, 155, 156, 156, 157, 157, 158, 159, 159, 159, 160, 160,
-        #              160, 161, 161, 161, 161, 161, 161, 162, 162, 162, 162, 162,
-        #              162, 163, 163, 163, 163, 163, 163, 163, 163, 163, 164,
-        #              164, 164, 164, 164, 164, 164, 164, 164, 164, 164, 164, 164,
-        #              164, 164, 165, 165, 165, 165, 165, 165, 165, 165, 165, 165,
-        #              165, 165, 165, 165, 165, 166, 166, 166, 166, 166, 166, 166,
-        #              166, 167, 167, 167, 167, 167, 167, 167, 167, 167, 167, 167,
-        #              167, 167, 167, 168, 168, 168, 168, 168, 168, 168, 168, 168,
-        #              168, 169, 169, 169, 169, 169, 169, 169, 169, 169, 169, 169,
-        #              169, 169, 169, 169, 170, 170, 170, 170, 170, 170, 170, 170,
-        #              170, 170, 170, 170, 170, 170, 170, 171, 171, 171, 171, 171,
-        #              171, 171, 171, 171, 171, 171, 172, 172, 172, 172, 172, 172,
-        #              172, 172, 172, 172, 172, 172, 173, 173, 173, 173, 173, 173,
-        #              173, 173, 173, 174, 174, 174, 174, 174, 174, 175, 175, 175,
-        #              175, 175, 175, 176, 176, 176, 176, 176, 176, 176, 176, 176,
-        #              176, 177, 178, 178, 178, 178, 179, 179, 179, 180, 180, 180,
-        #              181, 181, 182, 183, 184, 185, 186, 187, 190]
-        # self.Ydata = [87, 86, 85, 88, 82, 90, 91, 81, 83, 86, 83, 85,
-        #              87, 79, 82, 84, 84, 88, 91, 80, 89, 90, 92, 94,
-        #              100, 80, 88, 88, 88, 89, 91, 91, 92, 93, 83,
-        #              84, 84, 84, 85, 86, 87, 89, 89, 89, 90, 90, 91,
-        #              91, 97, 84, 85, 87, 87, 87, 87, 88, 90, 91, 91,
-        #              93, 94, 94, 94, 94, 82, 84, 84, 84, 87, 88, 89,
-        #              89, 81, 85, 85, 85, 86, 88, 88, 89, 89, 89, 90,
-        #              91, 91, 92, 81, 82, 83, 87, 88, 88, 90, 92, 93,
-        #              93, 79, 83, 87, 87, 87, 88, 88, 89, 91, 91, 91,
-        #              91, 91, 92, 92, 81, 86, 88, 88, 90, 90, 90, 90,
-        #              91, 91, 91, 92, 93, 95, 96, 83, 85, 89, 89, 90,
-        #              91, 91, 91, 92, 94, 97, 82, 87, 88, 89, 90, 91,
-        #              91, 94, 96, 98, 99, 99, 84, 87, 89, 89, 90, 90,
-        #              90, 91, 96, 86, 88, 90, 91, 96, 97, 85, 89, 90,
-        #              90, 91, 95, 82, 86, 87, 88, 90, 92, 93, 93, 93,
-        #              95, 87, 89, 90, 90, 91, 85, 85, 99, 85, 90, 98,
-        #              89, 92, 90, 90, 98, 91, 92, 86, 105]
-
         self.Xdata = [168, 158, 173, 165, 164, 161, 150, 155, 153, 182,
                       165, 184, 169, 170, 185, 165, 155, 164, 174, 145,
                       166, 181, 151, 158, 170, 184, 153, 158, 151, 164,
@@ -161,21 +126,9 @@ class MathStatistics:
         # self.xbar2 = 0
         # self.ybar2 = 0
 
-    def showData(self, lst):
-        index_x = 0
-        index_y = 0
-        i = 0
-        for dt in range(len(lst) // 10 if len(lst) % 10 == 0 else (len(lst) // 10)+1):
-            last = 10 if index_x+10 < len(lst) else len(lst) % 10
-            dd = lst[index_x:index_x+last]
-            for ii in range(2):
-                print("\nX " if ii == 0 else "\nY ", end="| ")
-                for item in dd:
-                    print("%9d" % item[ii], end='  ')
-            index_x += 10
-            print("\n\n")
 
 ###########################################################################################
+
 
     def writestep(self, num):
         print(f"Step {num}")
@@ -189,31 +142,8 @@ class MathStatistics:
             # num2 = rand.randint(80, 100)
             self.table1.append([self.Xdata[i], self.Ydata[i]])
 
-    def step1(self):
-        index_x = 0
-        index_y = 0
-        i = 0
-        for dt in range(self.N // 10 if self.N % 10 == 0 else (self.N // 10)+1):
-            last = 10 if index_x + \
-                10 <= self.N else self.N % 10
-            dd = self.table1[index_x:index_x+last]
-            t = self.doc.add_table(rows=2, cols=11)
-            t.rows[0].cells[0].text = "X"
-            t.rows[1].cells[0].text = "Y"
-            for index, item in enumerate(dd):
-                t.rows[0].cells[index+1].text = str(item[0])
-                t.rows[1].cells[index+1].text = str(item[1])
-            # for ii in range(2):
-            #    print("\nX " if ii == 0 else "\nY ", end="| ")
-            #    for item in dd:
-            #        print("%9d" % item[ii], end='  ')
-            index_x += 10
-            # print("")
-            self.doc.add_paragraph("")
-        self.doc.save(self.filename)
-
     def step2(self):
-        self.table2 = sorted(self.table1, key=lambda x: x[0])
+        self.table2 = sorted(self.table1, key=lambda x: x[1])
         index_x = 0
         index_y = 0
         i = 0
@@ -225,8 +155,8 @@ class MathStatistics:
             t.rows[0].cells[0].text = "X"
             t.rows[1].cells[0].text = "Y"
             for index, item in enumerate(dd):
-                t.rows[0].cells[index+1].text = str(item[0])
-                t.rows[1].cells[index+1].text = str(item[1])
+                t.rows[0].cells[index+1].text = str(item[1])
+                t.rows[1].cells[index+1].text = str(item[0])
             # for ii in range(2):
             #    print("\nX " if ii == 0 else "\nY ", end="| ")
             #    for item in dd:
@@ -238,7 +168,7 @@ class MathStatistics:
 
     def step3(self):
         i = 0
-        tmp = list(set(self.Xdata))
+        tmp = list(set(self.Ydata))
         table = 0
         t = None
         for index, item in enumerate(tmp):
@@ -252,32 +182,32 @@ class MathStatistics:
                 t.rows[3].cells[0].text = "ni"
             t.rows[0].cells[i+1].text = str(index+1)
             t.rows[1].cells[i+1].text = str(item)
-            t.rows[2].cells[i+1].text = str(self.Xdata.count(item))
+            t.rows[2].cells[i+1].text = str(self.Ydata.count(item))
             t.rows[3].cells[i +
-                            1].text = "%d/%d" % (self.Xdata.count(item), self.N)
-            self.table3.append([index+1, item, self.Xdata.count(item),
-                                (self.Xdata.count(item)/self.N)])
+                            1].text = "%d/%d" % (self.Ydata.count(item), self.N)
+            self.table3.append([index+1, item, self.Ydata.count(item),
+                                (self.Ydata.count(item)/self.N)])
             i += 1
         self.doc.save(self.filename)
 
     def step4(self):
-        h_ = (max(self.Xdata)-min(self.Xdata))/(1+3.28*log(len(self.Xdata)))
+        h_ = (max(self.Ydata)-min(self.Ydata))/(1+3.28*log(len(self.Ydata)))
         self.h = math.ceil(h_)
         h_txt = "h = xmax-xmin/1+3.28*ln N  = %d-%d/1+3.28*ln %d = %f = %d" % (
-            max(self.Xdata), min(self.Xdata), self.N, h_, self.h)
+            max(self.Ydata), min(self.Ydata), self.N, h_, self.h)
         p = self.doc.add_paragraph("")
         p.add_run(h_txt).bold = True
         self.doc.save(self.filename)
 
     def step5_hep_1(self, start, end):
         count = 0
-        for item in set([item[0] for item in self.table1]):
-            if item in range(start if start == min(self.Xdata) else start+1, end+1):
-                count += self.Xdata.count(item)
+        for item in set(self.Ydata):
+            if item in range(start if start == min(self.Ydata) else start+1, end+1):
+                count += self.Ydata.count(item)
         return count
 
     def step5(self):
-        _data = set(self.Xdata)
+        _data = set(self.Ydata)
         l = (max(_data)-min(_data))
         lst = l//self.h if l % self.h == 0 else (l//self.h)+1
         item = min(_data)
@@ -287,13 +217,13 @@ class MathStatistics:
         t.rows[0].cells[1].text = "xi<X<=xi+1"
         t.rows[0].cells[2].text = "ni"
         t.rows[0].cells[3].text = "pi=ni/N"
-
         sumni = 0
         for index in range(lst):
             t.rows[index+1].cells[0].text = str(index+1)
             t.rows[index+1].cells[1].text = "%d-%d" % (item, item+self.h)
             tmp = self.step5_hep_1(item, item+self.h)
             item += self.h
+            print(tmp)
             sumni += tmp
             t.rows[index+1].cells[2].text = "%d" % (tmp)
             t.rows[index+1].cells[3].text = "%d/%d" % (tmp, self.N)
@@ -318,14 +248,14 @@ class MathStatistics:
             else:
                 t.rows[index+1].cells[0].text = str(index+1)
                 t.rows[index+1].cells[1].text = "%d/%d + %d/%d = %d/%d" % (
-                    lastnum, len(self.Xdata), self.table4[index][2], len(self.Xdata), lastnum+self.table4[index][2], len(self.Xdata))
+                    lastnum, len(self.Ydata), self.table4[index][2], len(self.Ydata), lastnum+self.table4[index][2], len(self.Ydata))
                 self.table5.append(
                     [index+1, (lastnum+item)/self.N])
             lastnum += item
         self.doc.save(self.filename)
 
     def step7(self):
-        l = (max(self.Xdata)-min(self.Xdata))
+        l = (max(self.Ydata)-min(self.Ydata))
         lst = l//self.h if l % self.h == 0 else (l//self.h)+1
         t = self.doc.add_table(rows=lst+1, cols=4)
         t.rows[0].cells[0].text = "i"
@@ -333,7 +263,7 @@ class MathStatistics:
         t.rows[0].cells[2].text = "pi"
         t.rows[0].cells[3].text = "ni / h*N"
         # pprint.pprint(self.table4)
-        res = min(self.Xdata)
+        res = min(self.Ydata)
         for i, item in enumerate([item[2] for item in self.table4]):
             t.rows[i+1].cells[0].text = "%d" % (i+1)
             t.rows[i+1].cells[1].text = f"{(res*2+self.h)/2:.1f}"
@@ -346,7 +276,7 @@ class MathStatistics:
         self.doc.save(self.filename)
 
     def step8(self):
-        # Y = list(range(min(Xdata), max(Xdata), len(Y)//len(Fx)))
+        # Y = list(range(min(Ydata), max(Ydata), len(Y)//len(Fx)))
         Y = [item[1] for item in self.table5]
         X = [item[1] for item in self.table4]
         plt.plot(X, Y, "-o")
@@ -362,7 +292,7 @@ class MathStatistics:
         Y = [item[1] for item in self.table6]
         X = [item[2] for item in self.table6]
         plt.plot(Y, X, "-o")
-        #plt.bar(Y, X)
+        # plt.bar(Y, X)
         # plt.grid(True)
         plt.savefig("step9.png")
         p = self.doc.add_paragraph("")
@@ -543,117 +473,10 @@ class MathStatistics:
         tmp = list(filter(lambda x: x[0] == val, self.table1))
         return list(map(lambda x: x[1], tmp)).count(_val)
 
-    def step13(self):
-        lenydata = len(set(self.Ydata))
-        lenxdata = len(set(self.Xdata))
-        t = self.doc.add_table(rows=lenxdata+2, cols=lenydata+2)
-        t.columns[0].width = Inches(0.5)
-
-        for i in range(1, lenydata+2):
-            t.columns[i].width = Inches(0.3)
-        t.columns[lenydata + 1].width = Inches(0.5)
-        t.rows[0].cells[0].text = "X/Y"
-
-        for i, data in enumerate(set(self.Ydata)):
-            t.rows[0].cells[i+1].text = f"{data}"
-        t.rows[0].cells[lenydata+1].text = "nxi"
-
-        for i, data in enumerate(set(self.Xdata)):
-            t.rows[i+1].cells[0].text = f"{data}"
-        t.rows[lenxdata+1].cells[0].text = "yii"
-
-        tmp_x_table = [0]*lenydata
-        for index, data in enumerate(set(self.Xdata)):
-            tmp_table = []
-            for _index, _data in enumerate(set(self.Ydata)):
-                t.rows[index+1].cells[_index +
-                                      1].text = f"{self.get_count_for_step14(data, _data)}"
-                xx = self.get_count_for_step14(data, _data)
-                tmp_table.append(xx)
-                tmp_x_table[_index] += xx
-            x = sum(tmp_table)
-            t.rows[index+1].cells[lenydata +
-                                  1].text = f"{x}"
-            tmp_table.append(x)
-            self.table9.append(tmp_table)
-        self.table9.append(tmp_x_table)
-
-        p = self.doc.add_paragraph("")
-        p.add_run("xbar=1/n... ybar=....").bold = True
-        p.add_run(f"xbar={(1/self.N)*sum(self.Xdata)}").bold = True
-        p.add_run(f"ybar={(1/self.N)*sum(self.Ydata)}").bold = True
-        p.add_run(
-            f"x^2bar={(1/self.N)*sum([item**2 for item in self.Xdata])}").bold = True
-        p.add_run(
-            f"y^2bar={(1/self.N)*sum([item**2 for item in self.Ydata])}").bold = True
-        p.add_run(
-            f"xybar={(1/self.N)*sum([item*_item  for item,_item in zip(self.Xdata,self.Ydata)])}").bold = True
-
-        plt.clf()
-        plt.figure()
-        plt.plot(self.Xdata, self.Ydata, 'ro')
-        plt.savefig("step13.png")
-        self.doc.add_picture("step13.png")
-
-        for i, data in enumerate(tmp_x_table):
-            t.rows[lenxdata+1].cells[i+1].text = f"{data}"
-        t.rows[lenxdata+1].cells[lenydata +
-                                 1].text = f"{sum(tmp_x_table)}"
-        self.hy = min(list(filter(lambda x: x > 1, tmp_x_table)))
-        self.doc.add_paragraph(f"we take Y randomly : h={self.hy}")
-        Y = set(self.Ydata)
-        X = [item[0] for item in self.table7]
-        __Y = list(range(min(Y), max(Y), self.hy))
-        t = self.doc.add_table(rows=len(__Y)+3, cols=len(X)+3)
-        t.rows[len(__Y)+2].cells[len(X)+2].text = f"{self.N}"
-        t.columns[1].width = Inches(0.5)
-        t.rows[0].cells[0].text = "N"
-        t.rows[1].cells[1].text = "Y/X"
-        t.rows[1].cells[len(X)+2].text = "nyi"
-        t.rows[len(__Y)+2].cells[1].text = "nxi"
-        for i, item in enumerate(X):
-            t.rows[0].cells[i+2].text = f"{i+1}"
-            t.rows[1].cells[i+2].text = f"{item}"
-
-        for i, item in enumerate(__Y):
-            t.rows[i+2].cells[0].text = f"{i+1}"
-            t.rows[i+2].cells[1].text = f"{item}"
-        # step15
-        X_ = set([item[0] for item in self.table1])
-        Y_ = set([item[1] for item in self.table1])
-
-        def help(lst, startx, endx, starty, endy):
-            _ll = list(filter(lambda x: x[0] in range(startx, endx, 1), lst))
-            var = list(filter(lambda x: x[1] in range(starty, endy, 1), _ll))
-            return len(var)
-        for yindex, y in enumerate(range(min(Y_), max(Y_), self.hy)):
-            tbl = []
-            for xindex, i in enumerate(range(min(X_), max(X_), self.h)):
-                firstx = i
-                # if i+self.h < len(range(min(X_), max(X_), self.h))+1 else max(X_)
-                lastx = i + self.h
-                firsty = y
-                # if y+self.hy < len(range(min(Y_), max(Y_), self.hy))+1 else max(Y_)
-                lasty = y + self.hy
-                data = help(self.table1, firstx, lastx, firsty, lasty)
-                t.rows[yindex+2].cells[xindex+2].text = f"{data}"
-                tbl.append(data)
-            self.table10.append(tbl)
-        for index, item in enumerate(self.table10):
-            t.rows[index+2].cells[len(X)+2].text = f"{sum(item)}"
-        tt = [0]*len(self.table10[0])
-        for index in range(len(self.table10)):
-            for index_ in range(len(tt)):
-                tt[index_] += self.table10[index][index_]
-        for index in range(len(tt)):
-            t.rows[len(__Y)+2].cells[index+2].text = f"{tt[index]}"
-        self.doc.save(self.filename)
-
     #########################################
 mt = MathStatistics()
 mt.generateData()
-mt.writestep(1)
-mt.step1()
+
 mt.writestep(2)
 mt.step2()
 mt.writestep(3)
@@ -676,7 +499,5 @@ mt.writestep(11)
 mt.step11()
 mt.writestep(12)
 mt.step12()
-mt.writestep(13)
-mt.step13()
 
 #
